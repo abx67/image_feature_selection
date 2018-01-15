@@ -1,0 +1,52 @@
+% clear;
+% clc;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+fid10=fopen('norb-5x46789x9x18x6x2x108x108-training-01-dat.mat','r');
+training_01_dat=fread(fid10,'uchar');
+%fidcat10=fopen('norb-5x46789x9x18x6x2x108x108-training-10-cat.mat','r');
+%training_10_cat=fread(fidcat10,'uchar');
+training_01=transpose(reshape(training_01_dat(25:680244504),108*108,29160*2));
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+datanow=training_01(:,1:dimdata);
+%%%%%%%%%%%%%%%%%%%%%%%%%
+istart=1;
+iend=10;
+if exist('gooddata')&&exist('baddata')&&exist('ifdata');
+    fprintf('do not need to claim good/bad/ifdata \n');
+else
+    fprintf('this must be the first time to run the code \n');
+    gooddata=zeros(1,dimdata);
+    baddata=zeros(1,dimdata);
+    ifdata=zeros(1,dimdata);
+end
+for i=istart:iend
+    cifardisp(datanow(i,:)');
+    A=input('Enter the A:','s');
+    if A=='y';
+        if sum(any(gooddata==datanow(i,:)))==dimdata
+            fprintf('already have this picture\n');
+        else
+            gooddata=[gooddata;datanow(i,:)];
+        end
+        %continue;
+    elseif A=='n'
+        if sum(any(baddata==datanow(i,:)))==dimdata
+            fprintf('already have this picture\n');
+        else
+            baddata=[baddata;datanow(i,:)];
+        end
+        %continue;
+    elseif A=='w'
+        if sum(any(ifdata==datanow(i,:)))==dimdata
+            fprintf('already have this picture\n');
+        else
+            ifdata=[ifdata;datanow(i,:)];
+        end
+        %continue;
+    else
+        fprintf('wrong input,now come to next loop\n');
+        ifdata=[ifdata;datanow(i,:)];
+    end
+    fprintf('this is %i time\n',i);
+end
